@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
 
 	SDL_Init(SDL_INIT_EVERYTHING); //init sdl
 	IMG_Init(IMG_INIT_JPG); //init image lib
-	int hello_text[6] = {alpha_h, alpha_e,alpha_l,alpha_l,alpha_o};
+	int hello_text[20] = {alpha_h, alpha_e,alpha_l,alpha_l,alpha_o,space,alpha_f,alpha_r,alpha_i,alpha_e,alpha_n,alpha_d,alpha_s,space,alpha_o,alpha_f,space,alpha_v,alpha_i,alpha_p};
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024); //init audio mixer
 	uint prevTime = SDL_GetTicks(); // Get ticks
 	bool quit = false; // quit variable. if true quits and exits application
@@ -187,8 +187,13 @@ int main(int argc, char **argv) {
 		}
 		if(state == CODE_SCENE){
 			SDL_RenderClear(renderer); //clear the renderer
-			for (int x=0; x<6; x++) {
-				renderFont(fontTexture, renderer, &charRect[upper][hello_text[x]], x * FONT_WIDTH, 0 , FONT_WIDTH, FONT_HEIGHT);
+			for (int x=0; x<20; x++) {
+				if(x!=space){
+					renderFont(fontTexture, renderer, &charRect[upper][hello_text[x]], x * FONT_WIDTH, 0 , FONT_WIDTH, FONT_HEIGHT);
+				}else{
+					renderFont(fontTexture, renderer, &charRect[symbol][hello_text[x]], x * FONT_WIDTH, 0 , FONT_WIDTH, FONT_HEIGHT);
+				}
+				
 			}
 			SDL_RenderPresent(renderer); //show renderer on screen
 
