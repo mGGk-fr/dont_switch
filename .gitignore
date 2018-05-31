@@ -1,0 +1,8 @@
+.vscode/
+build/
+romfs/
+hello_friend_.elf
+hello_friend_.nacp
+hello_friend_.nro
+hello_friend_.nso
+hello_friend_.pfs0
