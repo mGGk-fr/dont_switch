@@ -36,10 +36,10 @@ DATA		  := dat
 INCLUDES	  := include
 EXEFS_SRC	  := exefs_src
 ROMFS         := romfs
-APP_VERSION   := 0.0
+APP_VERSION   := 42.666
 ICON          := icon.jpg
 
-APP_TITLE     := hello_friend
+APP_TITLE     := D0N'T SWITCH
 APP_AUTHOR    := mGGk
 
 

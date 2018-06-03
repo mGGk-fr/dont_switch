@@ -1,6 +1,7 @@
 //includes
 #include <switch.h>
 #include <random>
+#include <algorithm>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_image.h>
@@ -62,7 +63,10 @@ const int tat = 666;
 //different states
 const int SPLASH = 0;
 const int CODE_SCENE = 1;
-int state = SPLASH; //starting state
+const int BUG_SCENE = 2;
+const int SCROLL_SPEED = 2;
+const int LOGO_SPEED = 3;
+int state = CODE_SCENE; //starting state
 
 const int NUM_DOTS = 255;
 
@@ -312,7 +316,55 @@ void renderString(SDL_Texture *tex, SDL_Renderer *ren, string text, int x, int y
 					break;
 				case '-':
 					row = 2;
-					col = 8;
+					col = 7;
+					break;
+				case '1':
+					row = 2;
+					col = 16;
+					break;
+				case '2':
+					row = 2;
+					col = 17;
+					break;
+				case '3':
+					row = 2;
+					col = 18;
+					break;
+				case '4':
+					row = 2;
+					col = 19;
+					break;
+				case '5':
+					row = 2;
+					col = 20;
+					break;
+				case '6':
+					row = 2;
+					col = 21;
+					break;
+				case '7':
+					row = 2;
+					col = 22;
+					break;
+				case '8':
+					row = 2;
+					col = 23;
+					break;
+				case '9':
+					row = 2;
+					col = 24;
+					break;
+				case '0':
+					row = 2;
+					col = 15;
+					break;
+				case '@':
+					row = 2;
+					col = 5;
+					break;
+				case '.':
+					row =2;
+					col = 13;
 					break;
 				}
 				renderFont(tex, ren, &charRect[row][col], x+(i*FONT_WIDTH), y,FONT_WIDTH,FONT_HEIGHT);
@@ -334,6 +386,12 @@ void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, int w=-1, 
 
 	SDL_RenderCopy(ren, tex, NULL, &dest); // render the texture
 
+}
+float clip(float n, float lower, float upper) {
+  return std::max(lower, std::min(n, upper));
+}
+float zoomRatioCalc(int xPos){
+	return (sin(float(xPos)/926.0*3.14))+0.5;
 }
 
 void PlaySound(Mix_Chunk* sound) { //function to play a sound
@@ -383,8 +441,20 @@ int main(int argc, char **argv) {
 	int mainMenuIndex = 0; //main menu image index
 	int trPos = 1;
 	int scrollPos = 1300;
-	string topText = "Well hello VIP mGGk here for another shitty release but this time on Nintendo Switch, first greetz to Switchbrew Team for the DevKitPro, Code by mGGk, Music by a random computer algorithm";
-	topText+=" Greetz to friends : Popsy Team - Unity - LNX - tmp -- Greetz to legends : Razor1911 - Cocoon - TRSI - TBL - Attention Whore";
+	float zoomPerc = 1;
+	bool zInc = true;
+	int lPosX = -500;
+	int lPosY = 180;
+	bool lFront = true;
+	bool bFront = true;
+	bool bGoAlgo =false;
+ 	SDL_Rect bugRect;
+	bugRect.x = 10;
+	bugRect.y = 10;
+	bugRect.w = 1260;
+	bugRect.h = 150;
+	string topText = "Well hello VIP mGGk here for another shitty release but this time on Nintendo Switch - first greetz to Switchbrew Team for the DevKitPro - Code by mGGk - Music by Zac";
+	topText+=" Greetz to friends Popsy Team - Unity - LNX - tmp - AAA - swyng - MJJ PROD - XMEN -- Greetz to legends Razor1911 - Cocoon - TRSI - TBL - Attention Whore";
 
     //Setup window
     SDL_Window* window = SDL_CreateWindow(nullptr, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -393,10 +463,12 @@ int main(int argc, char **argv) {
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
 
 	//Load Images
-	SDL_Surface* splashImage = IMG_Load("assets/image/splash.png");
-	SDL_Texture* splashTexture = SDL_CreateTextureFromSurface(renderer, splashImage);
 	SDL_Surface* font16X16 = IMG_Load("assets/font/font_16x16.png");
 	SDL_Texture* fontTexture = SDL_CreateTextureFromSurface(renderer, font16X16);
+	SDL_Surface* font16X16r = IMG_Load("assets/font/font_16x16r.png");
+	SDL_Texture* fontTexturer = SDL_CreateTextureFromSurface(renderer, font16X16r);
+	SDL_Surface* sLogo = IMG_Load("assets/image/logo-2018.png");
+	SDL_Texture* tLogo = SDL_CreateTextureFromSurface(renderer,sLogo);
 
 	//Generateur de dots
 	int i = 0;
@@ -423,51 +495,70 @@ int main(int argc, char **argv) {
 
 		//Scan all the inputs. This should be done once for each frame
 		hidScanInput();
-
-		//if splash
-		if (state == SPLASH) {
-			splashTimer ++; //increase splash timer
-
-			if (splashTimer >= 50) { //if splash timer is greater than 75
-				state = CODE_SCENE; //change state to main menu
-			}
-
-			SDL_RenderClear(renderer); //clear the renderer
-			renderTexture(splashTexture, renderer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); //render the splash screen
-			SDL_RenderPresent(renderer); //show renderer on screen
-
-		}
+		splashTimer++;
 		if(state == CODE_SCENE){
 			SDL_RenderClear(renderer); //clear the renderer
 			//REndu text
 			drawLine(renderer, 0, 50, 1280, 50,255,255,255,255);
-			trPos = 1;
-			renderFont(fontTexture, renderer, &charRect[lower][alpha_m], trPos * FONT_WIDTH+10, 689 , FONT_WIDTH, FONT_HEIGHT);trPos++;
-			renderFont(fontTexture, renderer, &charRect[upper][alpha_g], trPos * FONT_WIDTH+10, 689 , FONT_WIDTH, FONT_HEIGHT);trPos++;
-			renderFont(fontTexture, renderer, &charRect[upper][alpha_g], trPos * FONT_WIDTH+10, 689 , FONT_WIDTH, FONT_HEIGHT);trPos++;
-			renderFont(fontTexture, renderer, &charRect[lower][alpha_k], trPos * FONT_WIDTH+10, 689 , FONT_WIDTH, FONT_HEIGHT);trPos++;
-			renderFont(fontTexture, renderer, &charRect[symbol][5], trPos * FONT_WIDTH+10, 689 , FONT_WIDTH, FONT_HEIGHT);trPos++;
-			renderFont(fontTexture, renderer, &charRect[upper][alpha_v], trPos * FONT_WIDTH+10, 689 , FONT_WIDTH, FONT_HEIGHT);trPos++;
-			renderFont(fontTexture, renderer, &charRect[upper][alpha_i], trPos * FONT_WIDTH+10, 689 , FONT_WIDTH, FONT_HEIGHT);trPos++;
-			renderFont(fontTexture, renderer, &charRect[upper][alpha_p], trPos * FONT_WIDTH+10, 689 , FONT_WIDTH, FONT_HEIGHT);trPos++;
-			renderFont(fontTexture, renderer, &charRect[symbol][number_2], trPos * FONT_WIDTH+10, 689 , FONT_WIDTH, FONT_HEIGHT);trPos++;
-			renderFont(fontTexture, renderer, &charRect[lower][alpha_k], trPos * FONT_WIDTH+10, 689 , FONT_WIDTH, FONT_HEIGHT);trPos++;
-			renderFont(fontTexture, renderer, &charRect[symbol][number_1], trPos * FONT_WIDTH+10, 689 , FONT_WIDTH, FONT_HEIGHT);trPos++;
-			renderFont(fontTexture, renderer, &charRect[symbol][number_8], trPos * FONT_WIDTH+10, 689 , FONT_WIDTH, FONT_HEIGHT);trPos++;
+			renderString(fontTexture,renderer,"mGGk@VIP2k18",10,689);
 			drawLine(renderer, 0, 670, 1280, 670,255,255,255,255);
-			renderString(fontTexture,renderer,topText,scrollPos,0);
-			scrollPos--;
+			renderString(fontTexture,renderer,topText,scrollPos,10);
+			scrollPos-=SCROLL_SPEED;
+			if(scrollPos < -5000){
+				scrollPos = 1300;
+			}
 			//REndu starfield
 			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 			for (int x=0; x<NUM_DOTS; x++) {
 				SDL_RenderDrawPoint(renderer, demo_dots[x].x, demo_dots[x].y);
 			}
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+			//Rendu item
+			if(splashTimer > 1450){
+					renderTexture(tLogo,renderer,lPosX,lPosY,sLogo->w,sLogo->h);
+					//renderString(fontTexture, renderer, to_string(splashTimer),10,100);
+					//Gestion sens
+					if(bGoAlgo ==true){
+						if(bFront){
+								lPosX+=LOGO_SPEED;
+						}else{
+								lPosX-=LOGO_SPEED;
+						}
+						if(lPosX>926){
+							bFront = false;
+						}
+						if(lPosX < 0){
+							bFront = true;
+						}
+					}else{
+							lPosX+=LOGO_SPEED;
+					}
+					if(lPosX>1){
+						bGoAlgo = true;
+					}
+
+			}
 			move_dots();
+
 			//Flip surface
 			SDL_RenderPresent(renderer); //show renderer on screen
-
+			if(splashTimer > 4000){
+				state = BUG_SCENE;
+			}
 		}
+
+		if(state == BUG_SCENE){
+				Mix_HaltMusic();
+				SDL_RenderClear(renderer);
+				SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+				SDL_RenderDrawRect(renderer,&bugRect);
+				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+				renderString(fontTexturer, renderer, "Software Failure. Throw your switch to continue", 264, 60);
+				renderString(fontTexturer, renderer, "Guru Meditation @42666.NOMOREBEERINTHEFRIDGE", 288, 80);
+				renderString(fontTexturer, renderer, "And also burn your ARM processors and go back to the 68k", 192, 100);
+				SDL_RenderPresent(renderer);
+		}
+
 
 	}
 
