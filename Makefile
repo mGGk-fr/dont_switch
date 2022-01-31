@@ -37,7 +37,7 @@ INCLUDES	  := include
 EXEFS_SRC	  := exefs_src
 ROMFS         := romfs
 APP_VERSION   := 42.666
-ICON          := icon.jpg
+#ICON          := icon.jpg
 
 APP_TITLE     := D0N'T SWITCH
 APP_AUTHOR    := mGGk
@@ -58,10 +58,12 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:=  -lSDL2_ttf -lSDL2_image -lSDL2_mixer -lSDL2 \
-			-lpng -lz -ljpeg \
-			-lvorbisidec -logg -lmpg123 -lmodplug -lstdc++ \
-			-lnx -lm
+#LIBS	:=  -lSDL2_ttf -lSDL2_image -lSDL2_gfx -lSDL2_mixer -lSDL2 \
+#			-lpng -lz -ljpeg \
+#			-lvorbisidec -logg -lmpg123 -lmodplug -lstdc++ \
+#			-lnx -lm
+
+LIBS := `aarch64-none-elf-pkg-config SDL2_mixer SDL2_ttf SDL2_image SDL2_gfx --libs`
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

@@ -457,10 +457,10 @@ int main(int argc, char **argv) {
 	topText+=" Greetz to friends Popsy Team - Unity - LNX - tmp - AAA - swyng - MJJ PROD - XMEN -- Greetz to legends Razor1911 - Cocoon - TRSI - TBL - Attention Whore";
 
     //Setup window
-    SDL_Window* window = SDL_CreateWindow(nullptr, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    SDL_Window* window = SDL_CreateWindow(nullptr, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, SDL_WINDOW_FULLSCREEN);
 
 	//Setup renderer
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
 	//Load Images
 	SDL_Surface* font16X16 = IMG_Load("assets/font/font_16x16.png");
@@ -494,7 +494,6 @@ int main(int argc, char **argv) {
 		}
 
 		//Scan all the inputs. This should be done once for each frame
-		hidScanInput();
 		splashTimer++;
 		if(state == CODE_SCENE){
 			SDL_RenderClear(renderer); //clear the renderer
